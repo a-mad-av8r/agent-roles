@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
+
+role="${1:-}"
+shift || true
+path=""
+action="edit"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --path) path="${2:-}"; shift 2 ;;
+    --action) action="${2:-edit}"; shift 2 ;;
+    *) echo "Unknown argument: $1" >&2; exit 1 ;;
+  esac
+done
+
+if [[ -z "$role" || -z "$path" || ! -f "roles/$role.md" ]]; then
+  echo "Usage: role-check <role> --path <path> [--action edit]" >&2
+  exit 1
+fi
+
+deny() {
+  echo "DENY $role $action $path"
+  echo "Reason: outside role boundary or explicitly excluded"
+  exit 2
+}
+
+allow() {
+  echo "ALLOW $role $action $path"
+  exit 0
+}
+
+case "$role:$path" in
+  designer:src/payments/*|designer:infrastructure/*|designer:migrations/*)
+    deny
+    ;;
+  designer:docs/posts/*|designer:docs/Articles/*|designer:visuals/*)
+    allow
+    ;;
+  writer:docs/*|writer:content/*)
+    allow
+    ;;
+  backend-engineer:src/*|backend-engineer:scripts/*|backend-engineer:tests/*)
+    allow
+    ;;
+  knowledge-keeper:memory/*|knowledge-keeper:docs/*|knowledge-keeper:examples/*)
+    allow
+    ;;
+  operator:scripts/*|operator:ops/*|operator:infrastructure/*)
+    allow
+    ;;
+  *)
+    deny
+    ;;
+esac

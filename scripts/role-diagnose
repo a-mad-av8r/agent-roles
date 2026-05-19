@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
+
+for required in writer designer backend-engineer knowledge-keeper operator; do
+  test -f "roles/$required.md"
+done
+test -f schemas/role-profile.schema.json
+echo "OK Agent Roles profiles and schema are present"

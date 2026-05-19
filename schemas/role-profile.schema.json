@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Agent Role Profile",
+  "type": "object",
+  "required": ["name", "owns", "excludes"],
+  "properties": {
+    "name": { "type": "string" },
+    "owns": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "excludes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "verification": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "escalation": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
